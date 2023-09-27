@@ -27,6 +27,9 @@
                         {!! $menusHtml !!}
 
                         <li>
+                            <a href="/blog">Tin tức</a>
+                        </li>
+                        <li>
                             <a href="contact.html">Liên hệ</a>
                         </li>
                     </ul>

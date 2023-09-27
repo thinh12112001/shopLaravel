@@ -19,7 +19,8 @@ class Product extends Model
         'price_sale',
         'price_original',
         'active',
-        'file'
+        'file',
+        'product_views'
     ];
 
     public function menu() {

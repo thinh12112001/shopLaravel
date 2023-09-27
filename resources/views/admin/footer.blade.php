@@ -15,17 +15,20 @@
     <script>
     $(document).ready(function() {
         // chart30daysorder();
-        var chart = new Morris.Bar({
-            // ID of the element in which to draw the chart.
-            element: 'chart',
-            // option
-            lineColors:['#819C79', '#fc8710', '#A4ADD3', '#766B56'],
-            hideHover: 'auto',
-            parseTime: false,
-            xkey: 'period',
-            ykeys: ['order','sales','profit','quantity'],
-            labels: ['đơn hàng','doanh số','lợi nhuận','số lượng']
-        });
+        if (window.location.pathname === '/admin/revenue/list') {
+            var chart = new Morris.Bar({
+                // ID of the element in which to draw the chart.
+                element: 'chart',
+                // option
+                lineColors:['#819C79', '#fc8710', '#A4ADD3', '#766B56'],
+                hideHover: 'auto',
+                parseTime: false,
+                xkey: 'period',
+                ykeys: ['order','sales','profit','quantity'],
+                labels: ['đơn hàng','doanh số','lợi nhuận','số lượng']
+            });
+        }
+
 
         $('#btn-dashboard-filter').click(function() {
             var _token = $('input[name="_token"]').val();

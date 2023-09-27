@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\CartController;
+use App\Http\Controllers\Admin\BlogController;
 
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\MainMenuController;
@@ -78,9 +79,24 @@ Route::middleware(['auth'])->group(function() {
         #Comment
         Route::get('comment/list', [CommentController::class, 'index']);
         // Route::post('comment/list', [CommentController::class, 'index']);
-
         Route::post('allow-comment', [App\Http\Controllers\ProductController::class, 'allow_comment']);
         Route::post('reply-comment', [App\Http\Controllers\ProductController::class, 'reply_comment']);
+
+        #Facebook login
+        // Route::get('login-facebook', [LoginController::class, 'login_facebook']);
+        // Route::get('callback', [LoginController::class, 'callback_facebook']);
+
+        #Blog
+        Route::prefix('blog')->group(function() {
+            Route::get('list', [BlogController::class, 'index']);
+            Route::get('add', [BlogController::class, 'create']);
+            Route::post('add', [BlogController::class, 'store']);
+            Route::get('edit/{blog}', [BlogController::class, 'show']);
+            Route::post('edit/{blog}', [BlogController::class, 'update']);
+            Route::delete('destroy', [BlogController::class, 'destroy']);
+        });
+
+
     });
 
 });
@@ -107,7 +123,6 @@ Route::post('/quickview', [App\Http\Controllers\ProductController::class, 'quick
 // Route::post('/show-popup/{product_id}', [App\Http\Controllers\CartController::class, 'showPopup'])->name('show.popup');
 Route::match(['get', 'post'], '/show-popup/{product_id}', [App\Http\Controllers\CartController::class, 'showPopup'])->name('show.popup');
 
-
 #Chart
 Route::post('filterbydate', [RevenueController::class, 'filter_by_date']);
 Route::post('dashboardfilter', [RevenueController::class, 'dashboard_filter'])->name('dashboard_filter');
@@ -116,4 +131,7 @@ Route::post('dashboardfilter', [RevenueController::class, 'dashboard_filter'])->
 Route::post('load-comment', [App\Http\Controllers\ProductController::class, 'load_comment']);
 Route::post('send-comment', [App\Http\Controllers\ProductController::class, 'send_comment']);
 
+#Blog
+Route::get('blog', [App\Http\Controllers\BlogController::class, 'index']);
+Route::get('blog/detail/{id}-{slug}.html', [App\Http\Controllers\BlogController::class, 'detail']);
 

@@ -19,7 +19,7 @@ class RevenueController extends Controller
 
     public function index() {
         return view('admin.revenue.dashboard', [
-            'title' => 'Thống kê doanh số'
+            'title' => 'Tổng quan'
         ]);
     }
 

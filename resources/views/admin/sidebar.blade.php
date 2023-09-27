@@ -173,6 +173,32 @@
               </li>
             </ul>
         </li>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-blog"></i>
+              <p>
+                Tin tức
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/blog/add" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Thêm tin tức</p>
+                  </a>
+                </li>
+              </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/blog/list" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Danh sách tin tức</p>
+                </a>
+              </li>
+            </ul>
+        </li>
       </nav>
       <!-- /.sidebar-menu -->
     </div>

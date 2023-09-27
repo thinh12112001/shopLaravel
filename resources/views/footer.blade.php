@@ -438,8 +438,8 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                 var comment_name = $('.comment_name').val();
                 var comment_content = $('.comment_content').val();
 
-
-                $.ajax({
+                if (comment_name.trim() !== '' && comment_content.trim() !== '') {
+                    $.ajax({
                     url: '/send-comment',
                     method: "POST",
                     data: {product_id: product_id,
@@ -447,19 +447,23 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                             comment_content: comment_content,
                             _token: _token},
 
-                    success:function(data) {
+                        success:function(data) {
 
-                        $('#notify_comment').html('<p class="text text-success">Thêm bình luận thành công! Đang chờ quản trị viên duyệt...</p>');
-                        load_comment();
-                        $('#notify_comment').fadeOut(9000);
-                        $('.comment_name').val('');
-                        $('.comment_content').val('');
+                            $('#notify_comment').html('<p class="text text-success">Thêm bình luận thành công! Đang chờ quản trị viên duyệt...</p>');
+                            load_comment();
+                            $('#notify_comment').fadeOut(9000);
+                            $('.comment_name').val('');
+                            $('.comment_content').val('');
 
-                    }
-                })
+                        }
+                    })
+                } else {
+                    alert('Bạn phải nhập đầy đủ thông tin mới được bình luận!');
+                }
+
             })
 
-            
+
         });
     </script>
 
