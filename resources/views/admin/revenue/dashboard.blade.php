@@ -70,9 +70,51 @@
             <div class="col-md-12">
                 <div id="chart" style="height: 250px;"></div>
             </div>
+
         </div>
+        <hr>
     </div>
 </form>
+
+    <div class="row">
+        {{-- <div class="col-md-4" col-xs-12>
+            <p class="title-thongke">Thống kê tổng sản phẩm bài viết đơn hàng</p>
+            <div id="donut"></div>
+        </div> --}}
+        <div class="col-md-8">
+            <h3>Bài viết xem nhiều</h3>
+            <ol class="list_views">
+                @foreach ($blog_views as $key => $blog)
+                    <li>
+                        <a target="_blank" href="../../blog/detail/{{$blog->id}}-{{Str::slug($blog->name, '-') }}.html">{{$blog->name}}
+                        | <span style="color:black;">{{$blog->blog_views}}</span></a>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+
+        <div class="col-md-4">
+            <style type="text/css">
+                ol.list_views{
+                    margin: 10px 0;
+                    color: black;
+                }
+                ol.list_views a {
+                    color: blue;
+                    font-weight: 400;
+                }
+            </style>
+            <h3>Sản phẩm xem nhiều</h3>
+            <ol class="list_views">
+                @foreach ($product_views as $key => $pro)
+                    <li>
+                        <a target="_blank" href="../../san-pham/{{$pro->id}}-{{Str::slug($pro->name, '-') }}.html">{{$pro->name}}
+                        | <span style="color:black;">{{$pro->product_views}}</span></a>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+    </div>
 @endsection
 
 

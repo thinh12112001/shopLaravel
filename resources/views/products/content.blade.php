@@ -33,12 +33,12 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="wrap-slick3-arrows flex-sb-m flex-w">
+                            {{-- <div class="wrap-slick3-arrows flex-sb-m flex-w">
                                 <button class="arrow-slick3 prev-slick3 slick-arrow" style=""><i
                                         class="fa fa-angle-left" aria-hidden="true"></i></button>
                                 <button class="arrow-slick3 next-slick3 slick-arrow" style=""><i
                                         class="fa fa-angle-right" aria-hidden="true"></i></button>
-                            </div>
+                            </div> --}}
 
                             <div class="slick3 gallery-lb slick-initialized slick-slider slick-dotted">
                                 <div class="slick-list draggable">

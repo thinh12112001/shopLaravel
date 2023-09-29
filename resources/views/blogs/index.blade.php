@@ -53,14 +53,14 @@
                             </li>
 
                             <li class="p-b-6">
-                                <a href="{{ request()->fullUrlWithQuery(['price' => 'asc']) }}" class="filter-link stext-106 trans-04">
-                                    Price: Low to High
+                                <a href="{{ request()->fullUrlWithQuery(['orderBy' => 'views', 'type' => 'asc']) }}" class="filter-link stext-106 trans-04">
+                                    Least to most views
                                 </a>
                             </li>
 
                             <li class="p-b-6">
-                                <a href="{{ request()->fullUrlWithQuery(['price' => 'desc']) }}" class="filter-link stext-106 trans-04">
-                                    Price: High to Low
+                                <a href="{{ request()->fullUrlWithQuery(['orderBy' => 'views', 'type' => 'desc']) }}" class="filter-link stext-106 trans-04">
+                                    Most to least views
                                 </a>
                             </li>
                         </ul>
@@ -68,32 +68,26 @@
 
                     <div class="filter-col2 p-r-15 p-b-27">
                         <div class="mtext-102 cl2 p-b-15">
-                            Price
+                            Created time
                         </div>
 
                         <ul>
                             <li class="p-b-6">
-                                <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
+                                <a href="#" class="filter-link stext-106 trans-04 ">
                                     All
                                 </a>
                             </li>
 
                             <li class="p-b-6">
                                 {{-- <a href="#" class="filter-link stext-106 trans-04"> --}}
-                                <a href="{{ request()->fullUrlWithQuery(['from' => 0, 'to' => 5000]) }}" class="filter-link stext-106 trans-04">
-                                    0 to 5,000
+                                <a href="{{ request()->fullUrlWithQuery(['orderBy' => 'create_time', 'type' => 'asc']) }}" class="filter-link stext-106 trans-04">
+                                    Oldest to newest
                                 </a>
                             </li>
 
                             <li class="p-b-6">
-                                <a href="{{ request()->fullUrlWithQuery(['from' => 5000, 'to' => 10000]) }}" class="filter-link stext-106 trans-04">
-                                    5000 to 10,000
-                                </a>
-                            </li>
-
-                            <li class="p-b-6">
-                                <a href="{{ request()->fullUrlWithQuery(['from' => 10000, 'to' => 100000]) }}" class="filter-link stext-106 trans-04">
-                                    10,000 to 100,000
+                                <a href="{{ request()->fullUrlWithQuery(['orderBy' => 'create_time', 'type' => 'desc']) }}" class="filter-link stext-106 trans-04">
+                                    Newest to oldest
                                 </a>
                             </li>
                         </ul>

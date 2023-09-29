@@ -14,9 +14,9 @@ class BlogController extends Controller
         $this->blogService = $blogService;
     }
 
-    public function index() {
+    public function index(Request $request) {
 
-        $blogs = $this->blogService->getAll();
+        $blogs = $this->blogService->get($request);
 
         return view('blogs.index',[
             'title' => 'Danh sách tin tức',
@@ -29,7 +29,8 @@ class BlogController extends Controller
     public function detail($id ='', $slug ='') {
         $blog = $this->blogService->show($id);
         $blogs = $this->blogService->getAll();
-
+        $blog->blog_views += 1;
+        $blog->save();
         return view('blogs.content', [
             'title' => $blog->name,
             'blog' => $blog,

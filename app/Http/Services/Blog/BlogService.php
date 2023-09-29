@@ -6,8 +6,24 @@ use App\Models\Blog;
 
 class BlogService
 {
-    public function getAll() {
-        return Blog::where('active', 1)->get();
+    public function get($request) {
+        $query = Blog::where('active',1);
+
+        if ($request->input('search')) {
+            $query->where('name', 'like','%'. $request->input('search'). '%');
+
+        }
+
+        if ($request->input('orderBy'))  {
+            if ( $request->input('orderBy') == 'views') {
+                $query->orderBy('blog_views', $request->input('type'));
+            } else {
+                $query->orderBy('created_at', $request->input('type'));
+            }
+        }
+
+
+        return $query->paginate(12)->withQueryString();
     }
 
     public function insert($request) {

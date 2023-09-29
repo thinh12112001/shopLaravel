@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Services\Revenue\RevenueService;
 use App\Models\Revenue;
+use App\Models\Product;
+use App\Models\Blog;
 use Carbon\Carbon;
 
 class RevenueController extends Controller
@@ -18,8 +20,12 @@ class RevenueController extends Controller
     }
 
     public function index() {
+        $product_views = Product::orderBy('product_views','DESC')->take(20)->get();
+        $blog_views = Blog::orderBy('blog_views','DESC')->take(20)->get();
         return view('admin.revenue.dashboard', [
-            'title' => 'Tổng quan'
+            'title' => 'Tổng quan',
+            'product_views' => $product_views,
+            'blog_views' => $blog_views
         ]);
     }
 
