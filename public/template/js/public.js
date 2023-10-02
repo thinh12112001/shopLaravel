@@ -17,12 +17,12 @@ function loadMore() {
                 $('#loadProduct').append(result.html);
                 $('#page').val(page + 1);
 
-                // lưu lại thông tin tránh bị mất khi load lại website
-                const loadedItems = localStorage.getItem('loadedItems') || [];
-                loadedItems.push(result.html);
-                localStorage.setItem('loadedItems', JSON.stringify(loadedItems));
+                // // lưu lại thông tin tránh bị mất khi load lại website
+                // const loadedItems = localStorage.getItem('loadedItems') || [];
+                // loadedItems.push(result.html);
+                // localStorage.setItem('loadedItems', JSON.stringify(loadedItems));
 
-                console.log(loadedItems);
+                // console.log(loadedItems);
             } else {
                 alert('Đã load xong Sản Phẩm');
                 $('#button-loadMore').css('display', 'none');

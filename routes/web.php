@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\CartController;
 use App\Http\Controllers\Admin\BlogController;
 
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\MainMenuController;
 
@@ -32,6 +33,7 @@ Route::post('admin/users/login/store', [LoginController::class, 'store']);
 Route::middleware(['auth'])->group(function() {
 
     Route::prefix('admin')->group(function() {
+        Route::get('/', [MainController::class, 'index'])->name('admin');
         Route::get('/', [MainController::class, 'index'])->name('admin');
         Route::get('main', [MainController::class, 'index']);
 
@@ -74,7 +76,7 @@ Route::middleware(['auth'])->group(function() {
         Route::delete('customers/destroy', [CartController::class, 'destroy']);
 
         #Revenue
-        Route::get('revenue/list', [RevenueController::class, 'index']);
+        Route::get('revenue/list', [RevenueController::class, 'index'])->name('dashboard');
 
         #Comment
         Route::get('comment/list', [CommentController::class, 'index']);
@@ -94,6 +96,16 @@ Route::middleware(['auth'])->group(function() {
             Route::get('edit/{blog}', [BlogController::class, 'show']);
             Route::post('edit/{blog}', [BlogController::class, 'update']);
             Route::delete('destroy', [BlogController::class, 'destroy']);
+        });
+
+        #Coupon
+        Route::prefix('coupons')->group(function() {
+            Route::get('list', [CouponController::class, 'index']);
+            Route::get('add', [CouponController::class, 'create']);
+            Route::post('add', [CouponController::class, 'store']);
+            Route::get('edit/{coupon}', [CouponController::class, 'show']);
+            Route::post('edit/{coupon}', [CouponController::class, 'update']);
+            Route::delete('destroy', [CouponController::class, 'destroy']);
         });
 
 
@@ -135,3 +147,11 @@ Route::post('send-comment', [App\Http\Controllers\ProductController::class, 'sen
 Route::get('blog', [App\Http\Controllers\BlogController::class, 'index']);
 Route::get('blog/detail/{id}-{slug}.html', [App\Http\Controllers\BlogController::class, 'detail']);
 
+#Rating
+Route::post('/insert-rating', [App\Http\Controllers\ProductController::class, 'insert_rating']);
+
+#Send mail coupon
+Route::get('/send-mail', [App\Http\Controllers\MailController::class, 'send_mail']);
+
+#Check coupon
+Route::post('/check_coupon', [App\Http\Controllers\CartController::class, 'check_coupon']);

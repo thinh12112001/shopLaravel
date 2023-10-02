@@ -87,7 +87,8 @@ class LoginController extends Controller
         ], $request->input('remember'))) {
             // return route('admin');
             Session::flash('status', 'Đăng nhập thành công');
-            return redirect()->route('admin');
+            return redirect()->route('dashboard');
+
 
         }
         Session::flash('error', 'Email hoặc mật khẩu không chính xác');

@@ -1,6 +1,7 @@
 @extends('main')
 
 @section('content')
+
 <form class="bg0 p-t-130 p-b-85" method="POST">
     @include('admin.alert')
     @if (count($products) != 0)
@@ -63,11 +64,12 @@
 
                     <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
                         <div class="flex-w flex-m m-r-20 m-tb-5">
-                            <input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
-
-                            <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
-                                Apply coupon
-                            </div>
+                            {{-- <form method="POST" action="check_coupon"> --}}
+                                @csrf
+                                <input  class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
+                                {{-- <input href="" class=" check_out"> --}}
+                                <input formaction="/check_coupon" type="submit" class="btn btn-default check_coupon" name="check_coupon" value="Apply coupon">
+                            {{-- </form> --}}
                         </div>
 
                         <input type="submit" value="Update Cart" formaction="/update-cart"
@@ -80,20 +82,44 @@
             <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
                     <h4 class="mtext-109 cl2 p-b-30">
-                        Cart Totals
+                        Tổng tiền
                     </h4>
 
                     <div class="flex-w flex-t bor12 p-b-13">
                         <div class="size-208">
                             <span class="stext-110 cl2">
-                                Subtotal:
+                                Giá trước giảm:
                             </span>
                         </div>
+
 
                         <div class="size-209">
                             <span class="mtext-110 cl2">
                                 {{number_format($total, 0, '', ',')}}
                             </span>
+                        </div>
+                        <div>
+                            <li>
+                                @if (Session::get('coupon'))
+                                    @foreach (Session::get('coupon') as $key => $count )
+                                        @if ($count['coupon_condition'] ==1)
+                                            Mã giảm: {{$count['coupon_number']}}%
+                                            <p>
+                                                @php
+                                                    $total_coupon = ($total * $count['coupon_number']) /100;
+
+                                                    echo '<p>Tổng giảm: ' . number_format($total_coupon, 0, '', ',') .'đ</p>';
+                                                    $total = $total - $total_coupon;
+                                                    unset($key);
+                                                @endphp
+                                            </p>
+                                            <p>Giá sau khi giảm: {{number_format($total, 0, '', ',')}}</p>
+
+                                        @endif
+                                    @endforeach
+
+                                @endif
+                            </li>
                         </div>
                     </div>
 
@@ -114,30 +140,30 @@
 
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="name" placeholder="Tên khách hàng" required>
+                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('name') }}" name="name" placeholder="Tên khách hàng" required>
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="number" name="phone" placeholder="Số điện thoại" required>
+                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="number" value="{{ old('phone') }}" name="phone" placeholder="Số điện thoại" required>
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="address" placeholder="Địa chỉ">
+                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('address') }}" name="address" placeholder="Địa chỉ">
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="email" placeholder="Email liên hệ">
+                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('email') }}" name="email" placeholder="Email liên hệ">
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <textarea class="cl8 plh3 size-111 p-lr-15" name="content" placeholder="Ghi chú" ></textarea>
+                                    <textarea class="cl8 plh3 size-111 p-lr-15" name="content" value="{{ old('content') }}" placeholder="Ghi chú" ></textarea>
                                 </div>
 
                             </div>
                         </div>
                     </div>
 
-
+                    <input type="hidden" name="total" value="{{ $total }}">
                     <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
                         Đặt hàng
                     </button>
@@ -160,5 +186,6 @@
         <div class="text-center"><h2>Giỏ hàng trống</h2></div>
     @endif
 </form>
+
 @endsection
 

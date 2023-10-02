@@ -288,20 +288,49 @@
                                             <p class="stext-102 cl6">
                                                 Your email address will not be published. Required fields are marked *
                                             </p>
+                                            <style>
+                                                .list-inline {
+                                                    list-style: none; /* Loại bỏ kiểu đánh dấu (bullet points) của danh sách */
+                                                    padding: 0; /* Loại bỏ padding */
+                                                    margin: 0; /* Loại bỏ margin */
+                                                }
 
+                                                .list-inline li {
+                                                    display: inline-block; /* Hiển thị các mục danh sách trên cùng một hàng */
+                                                }
+                                            </style>
                                             <div class="flex-w flex-m p-t-50 p-b-23">
 												<span class="stext-102 cl3 m-r-16">
 													Your Rating
 												</span>
-
-                                                <span class="wrap-rating fs-18 cl11 pointer">
+                                                <ul class="list-inline" title="Average Rating">
+                                                    @for ($count =1; $count <=5; $count++)
+                                                        @php
+                                                            if ($count <= $rating) {
+                                                                $color = 'color:#ffcc00;';
+                                                            } else {
+                                                                $color = 'color:#ccc;';
+                                                            }
+                                                        @endphp
+                                                        <li title="star_rating"
+                                                            id="{{$product->id}}-{{$count}}"
+                                                            data-index="{{$count}}"
+                                                            data-product_id="{{$product->id}}"
+                                                            data-rating="{{$rating}}"
+                                                            class="rating"
+                                                            style="cursor:pointer; {{$color}} font-size:30px;">
+                                                            &#9733;
+                                                        </li>
+                                                    @endfor
+                                                </ul>
+                                                {{-- <span class="wrap-rating fs-18 cl11 pointer">
 													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
 													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
 													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
 													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
 													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
 													<input class="dis-none" type="number" name="rating">
-												</span>
+												</span> --}}
                                             </div>
                                             <div id="notify_comment"></div>
                                             <div class="row p-b-25">

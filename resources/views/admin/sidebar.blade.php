@@ -1,3 +1,16 @@
+<style>
+  .nav-item ul {
+    display: none;
+  }
+
+  .nav-item.active ul {
+    display: block;
+  }
+
+  .nav-item.active .nav-icon i {
+    color: black; /* Đổi màu icon khi mục được chọn */
+  }
+</style>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/admin" class="brand-link">
@@ -18,7 +31,7 @@
       </div>
 
       <!-- SidebarSearch Form -->
-      <div class="form-inline">
+      {{-- <div class="form-inline">
         <div class="input-group" data-widget="sidebar-search">
           <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
@@ -27,20 +40,26 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> --}}
+      {{-- Tổng quan --}}
+
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
+          <!-- Tổng quan -->
           <li class="nav-item">
+            <a href="/admin/revenue/list" class="nav-link">
+              <i class="fas fa-chart-line"></i>
+              <p>Tổng quan</p>
+            </a>
+          </li>
+
+          <!-- Danh mục -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Danh mục
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>Danh mục<i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
@@ -55,54 +74,36 @@
                   <p>Danh sách danh mục</p>
                 </a>
               </li>
-              {{-- <li class="nav-item">
-                <a href="../../index3.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Dashboard v3</p>
-                </a>
-              </li> --}}
             </ul>
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-                     with font-awesome or any other icon font library -->
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                    <p>
-                      Sản phẩm
-                      <i class="right fas fa-angle-left"></i>
-                    </p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                      <a href="/admin/products/add" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Thêm sản phẩm</p>
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a href="/admin/products/list" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Danh sách sản phẩm</p>
-                      </a>
-                    </li>
-                    {{-- <li class="nav-item">
-                      <a href="../../index3.html" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Dashboard v3</p>
-                      </a>
-                    </li> --}}
-                  </ul>
           </li>
 
-          {{-- slider --}}
-          <li class="nav-item">
+          <!-- Sản phẩm -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Slider
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>Sản phẩm<i class="right fas fa-angle-left"></i></p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/products/add" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Thêm sản phẩm</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/products/list" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Danh sách sản phẩm</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Slider -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Slider<i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
@@ -117,16 +118,14 @@
                   <p>Danh sách slider</p>
                 </a>
               </li>
+            </ul>
+          </li>
 
-        </ul>
-
-        <li class="nav-item">
+          <!-- Giỏ hàng -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cart-plus"></i>
-              <p>
-                Giỏ hàng
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>Giỏ hàng<i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
@@ -136,33 +135,13 @@
                 </a>
               </li>
             </ul>
-        </li>
+          </li>
 
-        <li class="nav-item">
+          <!-- Bình luận -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
             <a href="#" class="nav-link">
-                <i class="fas fa-cash-register"></i>
-              <p>
-                Doanh thu
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/admin/revenue/list" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Thống kê doanh thu</p>
-                </a>
-              </li>
-            </ul>
-        </li>
-
-        <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-cash-register"></i>
-              <p>
-                Bình luận
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <i class="nav-icon fas fa-cash-register"></i>
+              <p>Bình luận<i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
@@ -172,25 +151,21 @@
                 </a>
               </li>
             </ul>
-        </li>
+          </li>
 
-        <li class="nav-item">
+          <!-- Tin tức -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
             <a href="#" class="nav-link">
-                <i class="fas fa-blog"></i>
-              <p>
-                Tin tức
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <i class="nav-icon fas fa-blog"></i>
+              <p>Tin tức<i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="/admin/blog/add" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Thêm tin tức</p>
-                  </a>
-                </li>
-              </ul>
-            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/blog/add" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Thêm tin tức</p>
+                </a>
+              </li>
               <li class="nav-item">
                 <a href="/admin/blog/list" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -198,9 +173,41 @@
                 </a>
               </li>
             </ul>
-        </li>
+          </li>
+
+          <!-- Mã khuyến mãi -->
+          <li class="nav-item" onclick="toggleSubMenu(this)">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Coupon<i class="right fas fa-angle-left"></i></p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/coupons/add" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Thêm coupon</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/coupons/list" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Danh sách coupon</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </nav>
       <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->
   </aside>
+
+  <script>
+    function toggleSubMenu(element) {
+      element.classList.toggle('active');
+    }
+
+
+
+  </script>

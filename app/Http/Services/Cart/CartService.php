@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Cart;
+use App\Models\Coupon;
 use App\Jobs\SendMail;
 use Illuminate\Support\Facades\DB;
 
@@ -202,6 +203,22 @@ class CartService
 
             DB::beginTransaction();
             $carts = Session::get('carts');
+            $coupon = Session::get('coupon');
+            $salePrice = 0;
+            $saleCondition = 0;
+            #nếu tồn tại coupon thì trừ số lần dùng đi 1
+            if ($coupon) {
+
+                $updateCouponTimeLeft = Coupon::findOrFail($coupon[0]['coupon_id']);
+                // dd($updateCouponTimeLeft);
+                $updateCouponTimeLeft->coupon_time = $updateCouponTimeLeft->coupon_time  -1;
+
+                $updateCouponTimeLeft->save();
+
+                $salePrice = $coupon[0]['coupon_number'];
+                $saleCondition = $coupon[0]['coupon_condition'];
+
+            }
 
             if (is_null($carts))
                 return false;
@@ -215,8 +232,10 @@ class CartService
             ]);
 
             #add to cart in db
-            $this->infoProductCart($carts, $customer->id);
+            $this->infoProductCart($carts, $customer->id, $salePrice, $saleCondition);
             DB::commit();
+
+
 
 
             #Queue
@@ -224,6 +243,7 @@ class CartService
 
             #Remove session
             Session::forget('carts');
+            Session::forget('coupon');
 
             #Statistic Revenue
             $rawData = DB::table('carts')
@@ -268,6 +288,7 @@ class CartService
 
         } catch (\Exception $err) {
             DB::rollBack();
+            \Log::error("An error occurred: " . $err->getMessage());
             Session::flash('error', 'Đặt Hàng Lỗi, Vui lòng thử lại sau');
             return false;
         }
@@ -276,7 +297,7 @@ class CartService
     }
 
     // thêm data thông tin đặt hàng (CART) vào  DB
-    protected function infoProductCart($carts, $customer_id) {
+    protected function infoProductCart($carts, $customer_id, $salePrice =0, $saleCondition =0) {
 
         $product_id = array_keys($carts);
         $products = Product::select('id', 'name', 'price', 'price_sale','file')
@@ -287,14 +308,27 @@ class CartService
         $data= [];
 
 
+        if ($saleCondition == 1) {
+            foreach ($products as $key => $product) {
+                $price = $product->price_sale != 0 ? $product->price_sale : $product->price;
+                $priceAfterCoupon = $price  - ($price * $salePrice) /100;
+                $data[] = [
+                    'customer_id' => $customer_id,
+                    'product_id' => $product->id,
+                    'qty' => $carts[$product->id],
+                    'price' =>  $priceAfterCoupon
+                ];
+            }
+        } else if ($saleCondition == 0) {
+            foreach ($products as $key => $product) {
 
-        foreach ($products as $product) {
-            $data[] = [
-                'customer_id' => $customer_id,
-                'product_id' => $product->id,
-                'qty' => $carts[$product->id],
-                'price' => $product->price_sale != 0 ? $product->price_sale : $product->price
-            ];
+                $data[] = [
+                    'customer_id' => $customer_id,
+                    'product_id' => $product->id,
+                    'qty' => $carts[$product->id],
+                    'price' =>  $product->price_sale != 0 ? $product->price_sale : $product->price
+                ];
+            }
         }
 
         return Cart::insert($data);
@@ -309,5 +343,44 @@ class CartService
         return $customer->carts()->with(['product' => function($query) {
             $query->select('id', 'name', 'file');
         }])->get();
+    }
+
+    public function checkcoupon($coupon, $request) {
+
+        if ($coupon) {
+            $count_coupon = $coupon->count();
+
+            if ($count_coupon > 0) {
+                $coupon_session = Session::get('coupon');
+
+                if ($coupon_session==true) {
+                    $is_available = 0;
+                    if ($is_available == 0) {
+                        $count[] = array(
+                            'coupon_code' => $coupon->coupon_code,
+                            'coupon_condition' => $coupon->coupon_condition,
+                            'coupon_number' => $coupon->coupon_number,
+                            'coupon_time' => $coupon->coupon_time,
+                            'coupon_id' => $coupon->coupon_id
+                        );
+                        Session::put('coupon', $count);
+                    }
+                } else {
+                    $count[] = array(
+                        'coupon_code' => $coupon->coupon_code,
+                        'coupon_condition' => $coupon->coupon_condition,
+                        'coupon_number' => $coupon->coupon_number,
+                        'coupon_id' => $coupon->coupon_id
+                    );
+                    Session::put('coupon', $count);
+                }
+
+                Session::save();
+                $request->session()->flash('success', 'Thêm mã thành công');
+                return true;
+            }
+       }
+       $request->session()->flash('error', 'Mã giảm giá không đúng hoặc đã hết lượt dùng!');
+       return false;
     }
 }

@@ -54,6 +54,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        // dd($product->id);
         return view('admin.product.edit', [
             'title' => 'Chỉnh sửa sản phẩm',
             'product'=> $product,

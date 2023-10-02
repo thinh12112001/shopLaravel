@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Services\Product\ProductMainService;
 use App\Models\Product;
 use App\Models\Comment;
+use App\Models\Rating;
 use Carbon\Carbon;
 
 class ProductController extends Controller
@@ -22,10 +23,14 @@ class ProductController extends Controller
         $product->product_views += 1;
         $product->save();
 
+        $rating = Rating::where('product_id', $product->id)->avg('rating');
+        $rating =round($rating);
+
         return view('products.content', [
             'title' => $product->name,
             'product' => $product,
-            'products' => $productsMore
+            'products' => $productsMore,
+            'rating' => $rating
         ]);
     }
 
@@ -133,5 +138,24 @@ class ProductController extends Controller
         $comment->comment_name = 'Admin';
         $comment->comment_date = $current_timestamp;
         $comment->save();
+    }
+
+    public function insert_rating(Request $request) {
+
+
+        try {
+            // $rating = new Rating();
+            // $rating->rating = $request->input('rating');
+            // $rating->product_id  =$request->input('product_id');
+            // $rating->save();
+            $request->except('_token');
+            Rating::create($request->all());
+            echo "done";
+        }
+        catch (\Exception $err) {
+            \Log::info($err->getMessage());
+        }
+
+
     }
 }

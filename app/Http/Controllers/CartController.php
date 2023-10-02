@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Http\Services\Cart\CartService;
 use App\Models\Product;
+use App\Models\Coupon;
 
 class CartController extends Controller
 {
@@ -62,7 +63,7 @@ class CartController extends Controller
     public function update(Request $request) {
         $this->cartService->update($request);
 
-        return redirect('/carts');
+        return redirect('/carts')->withInput();
     }
 
     public function remove($id = 0) {
@@ -94,5 +95,17 @@ class CartController extends Controller
         }
 
         return redirect('/carts');
+    }
+
+    public function check_coupon(Request $request) {
+        try {
+            $data = $request->all();
+            $coupon  = Coupon::where("coupon_code", $data['coupon'])->first();
+            $result = $this->cartService->checkcoupon($coupon, $request);
+            return redirect()->back()->withInput();
+
+        } catch (\Exception $err) {
+            \Log::error("An error occurred", ['exception' => $err]);
+        }
     }
 }

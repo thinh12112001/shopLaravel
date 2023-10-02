@@ -1,6 +1,146 @@
 {{-- @php
     $menusHtml = \App\Helpers\Helper::menus($menus);
 @endphp --}}
+    <!-- Chatbox Realtime -->
+    {{-- <style>
+        #chat-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.chat-box {
+  width: 300px; /* Adjust the width of the chat box as needed */
+  height: 300px; /* Adjust the height of the chat box as needed */
+  background-color: #f2f2f2;
+  display: none; /* Hide the chat box by default */
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.avatar {
+  font-weight: bold;
+}
+
+.close-btn {
+  cursor: pointer;
+}
+
+.chat-body {
+  padding: 10px;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.chat-footer {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.message-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.send-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+.send-btn:hover {
+  background-color: #45a049;
+}
+
+.avatar-display .chat-content {
+  display: none;
+}
+
+.avatar-display .avatar {
+  cursor: pointer;
+}
+
+.chat-display .avatar {
+  cursor: pointer;
+}
+
+.chat-display .chat-content {
+  display: block;
+}
+
+.avatar {
+  background-color: #3498db;
+  color: white;
+  text-align: center;
+  line-height: 50px;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0 20px;
+  width: 100%; /* Set width to 100% */
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.avatar:hover {
+  background-color: #2980b9;
+}
+
+/* Style for the expanded chat box */
+.avatar-display {
+  display: inline-block;
+}
+
+.chat-content {
+  width: auto; /* Initially set to auto */
+  background-color: #f2f2f2;
+  display: none; /* Hide the chat box by default */
+  border-radius: 10px;
+  overflow: hidden; /* Hide overflowing content */
+}
+
+
+    </style>
+
+<div id="chat-box" class="avatar-display">
+    <div class="avatar" onclick="toggleChatBox()">Message</div>
+    <div class="chat-content">
+      <div class="chat-header">
+        <div class="avatar">Admin</div>
+        <div class="close-btn" onclick="toggleChatBox()">×</div>
+      </div>
+      <div class="chat-body">
+        <div class="message">Welcome to the chat!</div>
+        <!-- More messages go here -->
+      </div>
+      <div class="chat-footer">
+        <textarea class="message-input" placeholder="Type your message..."></textarea>
+        <button class="send-btn">Send</button>
+      </div>
+    </div>
+  </div> --}}
+
 <!-- Footer -->
 <footer class="bg3 p-t-75 p-b-32">
     <div class="container">
@@ -308,6 +448,14 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div>
     </div>
 </div>
+{{-- Chat box --}}
+<script>
+    function toggleChatBox() {
+  const chatBox = document.getElementById('chat-box');
+  chatBox.classList.toggle('avatar-display');
+  chatBox.classList.toggle('chat-display');
+}
+</script>
 <!--===============================================================================================-->
     <script src="{{ asset('template/vendor/jquery/jquery-3.2.1.min.js') }}"></script>
 <!--===============================================================================================-->
@@ -463,7 +611,54 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
             })
 
+            function remove_background(product_id){
+                for (let count =1; count <=5; count++) {
+                    $('#'+product_id+'-'+count).css('color', "#ccc");
+                }
+            }
 
+            $(document).on('mouseenter', '.rating', function() {
+                var index = $(this).data("index");
+                var product_id = $(this).data("product_id");
+
+                remove_background(product_id);
+
+                for (let count =1; count <= index; count++) {
+                    $('#'+product_id+'-'+count).css('color', "#ffcc00");
+                }
+            });
+
+            $(document).on('mouseleave', '.rating', function() {
+                var index = $(this).data("index");
+                var product_id = $(this).data("product_id");
+                var rating = $(this).data("rating");
+
+                remove_background(product_id);
+
+                for (let count =1; count <= rating; count++) {
+                    $('#'+product_id+'-'+count).css('color', "#ffcc00");
+                }
+            });
+
+            $(document).on('click', '.rating', function() {
+                var index = $(this).data("index");
+                var product_id = $(this).data("product_id");
+                var _token = $('input[name="_token"]').val();
+
+                $.ajax({
+                    url: '/insert-rating',
+                    method: "POST",
+                    data: {rating: index, product_id: product_id, _token : _token},
+
+                    success:function(data) {
+                        if (data == "done") {
+                            alert('Bạn đã đánh giá '+index+" trên 5 sao!");
+                        } else {
+                            alert("lỗi đánh giá");
+                        }
+                    }
+                });
+            });
         });
     </script>
 
