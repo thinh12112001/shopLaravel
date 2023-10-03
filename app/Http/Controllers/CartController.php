@@ -108,4 +108,12 @@ class CartController extends Controller
             \Log::error("An error occurred", ['exception' => $err]);
         }
     }
+
+    public function remove_coupon(Request $request) {
+        $coupon = Session::get('coupon');
+
+        $result = $this->cartService->removeCoupon($coupon, $request);
+
+        return redirect('/carts')->withInput();
+    }
 }

@@ -108,8 +108,11 @@ class CartService
     public function remove($id) {
         $carts = Session::get('carts');
         unset($carts[$id]);
-
         Session::put('carts', $carts);
+
+        if (empty($carts)) {
+            Session::forget('coupon');
+        }
         return true;
     }
 
@@ -147,6 +150,7 @@ class CartService
 
             #Remove session
             Session::forget('carts');
+            Session::forget('coupon');
 
             #Statistic Revenue
             $rawData = DB::table('carts')
@@ -239,7 +243,7 @@ class CartService
 
 
             #Queue
-            SendMail::dispatch($request->input('email'))->delay(now()->addSeconds(2));
+            SendMail::dispatch($request->input('email'))->delay(now()->addSeconds(5));
 
             #Remove session
             Session::forget('carts');
@@ -376,11 +380,26 @@ class CartService
                 }
 
                 Session::save();
-                $request->session()->flash('success', 'Thêm mã thành công');
+                $request->session()->flash('success', 'Dùng mã thành công');
                 return true;
             }
        }
        $request->session()->flash('error', 'Mã giảm giá không đúng hoặc đã hết lượt dùng!');
        return false;
+    }
+
+    public function removeCoupon($coupon, $request) {
+        try {
+            if ($coupon) {
+                Session::forget('coupon');
+            }
+            Session::flash('success', 'Gỡ mã giảm giá thành công');
+        } catch (\Exception $err) {
+            \Log::error("An error occurred: " . $err->getMessage());
+            Session::flash('error', 'Gỡ mã thất bại! Vui lòng thử lại sau');
+            return false;
+        }
+        return true;
+
     }
 }

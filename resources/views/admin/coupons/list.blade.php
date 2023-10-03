@@ -38,6 +38,8 @@
             @endforeach
         </tbody>
     </table>
+<hr>
+    <p style="padding-left: 10px "><a href="/send-mail" class="btn btn-default">Gửi mã giảm giá khách vip</a></p>
 
     <div class="card-footer clearfix">
         {!! $coupons->links('pagination::bootstrap-4') !!}

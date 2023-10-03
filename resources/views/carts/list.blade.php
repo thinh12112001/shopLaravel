@@ -68,7 +68,10 @@
                                 @csrf
                                 <input  class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
                                 {{-- <input href="" class=" check_out"> --}}
-                                <input formaction="/check_coupon" type="submit" class="btn btn-default check_coupon" name="check_coupon" value="Apply coupon">
+                                <input formaction="/check_coupon" type="submit" class="btn btn-default check_coupon" name="check_coupon" value="Apply coupon" style="margin-right: 10px;">
+                                @if (Session::get('coupon'))
+                                    <input formaction="/remove_coupon" type="submit" class="btn btn-danger remove_coupon" name="remove_coupon" value="Remove coupon">
+                                @endif
                             {{-- </form> --}}
                         </div>
 
@@ -88,7 +91,7 @@
                     <div class="flex-w flex-t bor12 p-b-13">
                         <div class="size-208">
                             <span class="stext-110 cl2">
-                                Giá trước giảm:
+                                Tổng tiền:
                             </span>
                         </div>
 
@@ -113,7 +116,7 @@
                                                     unset($key);
                                                 @endphp
                                             </p>
-                                            <p>Giá sau khi giảm: {{number_format($total, 0, '', ',')}}</p>
+                                            <p>Tổng đã giảm: {{number_format($total, 0, '', ',')}}</p>
 
                                         @endif
                                     @endforeach

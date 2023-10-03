@@ -152,6 +152,8 @@ Route::post('/insert-rating', [App\Http\Controllers\ProductController::class, 'i
 
 #Send mail coupon
 Route::get('/send-mail', [App\Http\Controllers\MailController::class, 'send_mail']);
+Route::get('/mail-example', [App\Http\Controllers\MailController::class, 'mail_example']);
 
-#Check coupon
+#Check and remove coupon
 Route::post('/check_coupon', [App\Http\Controllers\CartController::class, 'check_coupon']);
+Route::post('/remove_coupon', [App\Http\Controllers\CartController::class, 'remove_coupon']);
