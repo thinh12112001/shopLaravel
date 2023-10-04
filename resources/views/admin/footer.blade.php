@@ -13,9 +13,12 @@
 {{-- date picker --}}
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
+        //script dash board thống kê doanh số
     $(document).ready(function() {
         // chart30daysorder();
-        if (window.location.pathname === '/admin/revenue/list') {
+        if (window.location.pathname === '/admin/revenue/list'
+                    || window.location.pathname === '/admin/revenue/add'
+                    || window.location.pathname === '/admin/revenue/edit') {
             var chart = new Morris.Bar({
                 // ID of the element in which to draw the chart.
                 element: 'chart',
@@ -80,6 +83,25 @@
             });
 
             $('#datepicker2').datepicker({
+                prevText: "Tháng trước",
+                nextText: "Tháng sau",
+                dateFormat: "yy-mm-dd",
+                dayNamesMin: ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ nhật"],
+                duration: "slow"
+            });
+        } );
+
+        // chọn ngày bắt đầu và kết thúc của coupon
+        $( function() {
+            $('#start_coupon').datepicker({
+                prevText: "Tháng trước",
+                nextText: "Tháng sau",
+                dateFormat: "yy-mm-dd",
+                dayNamesMin: ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ nhật"],
+                duration: "slow"
+            });
+
+            $('#end_coupon').datepicker({
                 prevText: "Tháng trước",
                 nextText: "Tháng sau",
                 dateFormat: "yy-mm-dd",

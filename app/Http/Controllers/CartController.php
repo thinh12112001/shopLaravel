@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Services\Cart\CartService;
 use App\Models\Product;
 use App\Models\Coupon;
+use Carbon\Carbon;
 
 class CartController extends Controller
 {
@@ -100,7 +101,11 @@ class CartController extends Controller
     public function check_coupon(Request $request) {
         try {
             $data = $request->all();
-            $coupon  = Coupon::where("coupon_code", $data['coupon'])->first();
+            $today = Carbon::now('Asia/Ho_Chi_minh')->format('Y-m-d');
+            $coupon  = Coupon::where('coupon_status' ,1)->where("coupon_code", $data['coupon'])
+                                                        ->where("coupon_date_end", '>=',  $today)
+                                                        ->whereNot("coupon_time", 0)
+                                                        ->first();
             $result = $this->cartService->checkcoupon($coupon, $request);
             return redirect()->back()->withInput();
 

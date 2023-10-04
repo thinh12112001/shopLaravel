@@ -17,6 +17,9 @@ class Coupon extends Model
         'coupon_time',
         'coupon_number',
         'coupon_condition',
+        'coupon_date_start',
+        'coupon_date_end',
+        'coupon_status'
     ];
 
     protected $primaryKey ='coupon_id';

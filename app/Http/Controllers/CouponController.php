@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Coupon;
 use App\Http\Services\Coupon\CouponService;
 use App\Http\Requests\Coupon\CouponRequest;
+use Carbon\Carbon;
 
 class CouponController extends Controller
 {
@@ -57,10 +58,12 @@ class CouponController extends Controller
 
     public function index() {
         $coupons = $this->couponService->get();
-
+        $today  = Carbon::now('Asia/Ho_Chi_minh')->format('Y-m-d');
+        // dd($today);
         return view('admin.coupons.list', [
             'title' => 'Danh sách mã giảm giá',
-            'coupons' => $coupons
+            'coupons' => $coupons,
+            'today'=> $today
         ]);
     }
 

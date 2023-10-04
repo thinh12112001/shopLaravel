@@ -10,6 +10,7 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Jobs\SendMail;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CartService
 {
@@ -204,28 +205,12 @@ class CartService
     public function addCart($request)
     {
         try {
-
             DB::beginTransaction();
+            $today = Carbon::now('Asia/Ho_Chi_minh')->format('Y-m-d');
             $carts = Session::get('carts');
             $coupon = Session::get('coupon');
             $salePrice = 0;
             $saleCondition = 0;
-            #nếu tồn tại coupon thì trừ số lần dùng đi 1
-            if ($coupon) {
-
-                $updateCouponTimeLeft = Coupon::findOrFail($coupon[0]['coupon_id']);
-                // dd($updateCouponTimeLeft);
-                $updateCouponTimeLeft->coupon_time = $updateCouponTimeLeft->coupon_time  -1;
-
-                $updateCouponTimeLeft->save();
-
-                $salePrice = $coupon[0]['coupon_number'];
-                $saleCondition = $coupon[0]['coupon_condition'];
-
-            }
-
-            if (is_null($carts))
-                return false;
 
             $customer = Customer::create([
                 'name' => $request->input('name'),
@@ -235,12 +220,45 @@ class CartService
                 'content' => $request->input('content')
             ]);
 
+            if ($coupon) {
+                #update ID that use this coupon
+                try {
+                    $updateCouponTimeLeft = Coupon::where('coupon_id', $coupon[0]['coupon_id'])
+                                                    ->whereNotIn('coupon_id', $coupon[0]['coupon_used'])
+                                                    ->get();
+                } catch (\Exception $err) {
+                    DB::rollBack();
+                    \Log::error("An error occurred: " . $err->getMessage());
+                    Session::flash('error', 'Bạn đã dùng mã khuyến mãi này rồi');
+                    return false;
+                }
+
+                $updateCouponTimeLeft = Coupon::findOrFail($coupon[0]['coupon_id']);
+
+                if ($updateCouponTimeLeft->coupon_time == 0) {
+                    DB::rollBack();
+                    Session::flash('error', 'Mã khuyến mãi này đã hết, vui lòng dùng mã khác');
+                    return false;
+                } else if ($updateCouponTimeLeft->coupon_date_end < $today) {
+                    DB::rollBack();
+                    Session::flash('error', 'Mã khuyến mãi này đã hết hạn, vui lòng dùng mã khác');
+                    return false;
+                }
+                $updateCouponTimeLeft->coupon_time = $updateCouponTimeLeft->coupon_time  -1;
+                $updateCouponTimeLeft->coupon_used = $updateCouponTimeLeft->coupon_used. ','.  explode('@',$customer->email)[0];
+
+                $updateCouponTimeLeft->save();
+
+                $salePrice = $coupon[0]['coupon_number'];
+                $saleCondition = $coupon[0]['coupon_condition'];
+
+            }
+            if (is_null($carts))
+                return false;
+
             #add to cart in db
             $this->infoProductCart($carts, $customer->id, $salePrice, $saleCondition);
             DB::commit();
-
-
-
 
             #Queue
             SendMail::dispatch($request->input('email'))->delay(now()->addSeconds(5));
@@ -384,7 +402,7 @@ class CartService
                 return true;
             }
        }
-       $request->session()->flash('error', 'Mã giảm giá không đúng hoặc đã hết lượt dùng!');
+       $request->session()->flash('error', 'Mã giảm giá không đúng hoặc đã hết hạn!');
        return false;
     }
 

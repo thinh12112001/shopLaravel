@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 class CouponService
 {
     public function get() {
+        
         return Coupon::orderby('coupon_id')->paginate(20);
     }
 

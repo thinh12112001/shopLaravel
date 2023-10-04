@@ -11,9 +11,19 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="menu">Tên mã giảm giá</label>
-                        <input type="text" name="coupon_name" value="{{ old('coupon_name') }}" class="form-control"  >
+                        <input  type="text" name="coupon_name" value="{{ old('coupon_name') }}" class="form-control"  >
                     </div>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label>Ngày bắt đầu</label>
+                <input type="text" id="start_coupon" name="coupon_date_start" value="{{ old('coupon_date_start') }}" class="form-control"  >
+            </div>
+
+            <div class="form-group">
+                <label>Ngày kết thúc</label>
+                <input type="text" id="end_coupon" name="coupon_date_end" value="{{ old('coupon_date_end') }}" class="form-control"  >
             </div>
 
             <div class="form-group">
@@ -40,6 +50,18 @@
                 <input type="text" name="coupon_number" id="coupon_number" class="form-control" value="{{ old('coupon_number') }} " >
             </div>
 
+            <div class="form-group">
+                <label>Kích Hoạt</label>
+                <div class="custom-control custom-radio">
+                    <input class="custom-control-input" value="1" type="radio" id="coupon_status" name="coupon_status" checked="">
+                    <label for="coupon_status" class="custom-control-label">Có</label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input class="custom-control-input" value="0" type="radio" id="no_coupon_status" name="coupon_status" >
+                    <label for="no_coupon_status" class="custom-control-label">Không</label>
+                </div>
+            </div>
+
 
             {{-- <div class="form-group">
                 <label>Kích Hoạt</label>
@@ -61,8 +83,8 @@
     </form>
 @endsection
 
-@section('footer')
+{{-- @section('footer')
     <script>
         CKEDITOR.replace('content');
     </script>
-@endsection
+@endsection --}}

@@ -151,11 +151,11 @@
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('address') }}" name="address" placeholder="Địa chỉ">
+                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('address') }}" name="address" placeholder="Địa chỉ" required>
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
-                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('email') }}" name="email" placeholder="Email liên hệ">
+                                    <input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" value="{{ old('email') }}" name="email" placeholder="Email liên hệ" required>
                                 </div>
 
                                 <div class="bor8 bg0 m-b-12">
