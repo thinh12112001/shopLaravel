@@ -26,6 +26,10 @@ class BlogService
         return $query->paginate(12)->withQueryString();
     }
 
+    public function getAll() {
+        return Blog::orderby('id')->paginate(20);
+    }
+
     public function insert($request) {
 
         try {
