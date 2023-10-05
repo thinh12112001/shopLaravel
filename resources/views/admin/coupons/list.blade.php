@@ -14,6 +14,7 @@
             <th>Tính năng mã</th>
             <th>Tình trạng mã</th>
             <th>Hết hạn</th>
+            <th>Gửi mã</th>
             <th style="width: 100px">&nbsp;</th>
         </tr>
         </thead>
@@ -46,6 +47,25 @@
                         <span style="color:red;">Hết hạn</span>
                     @endif
                 </td>
+                <td>
+                    <p style="padding-left: 10px "><a href="{{url('/send-mail-vip',
+                        ['start_date' => $coupon->coupon_date_start,
+                        'end_date' => $coupon->coupon_date_end,
+                        'coupon_time' => $coupon->coupon_time,
+                        'coupon_condition' => $coupon->coupon_condition,
+                        'coupon_number' => $coupon->coupon_number,
+                        'coupon_code' => $coupon->coupon_code] )}}"
+                        class="btn btn-primary btn-sm" style="margin: 5px 0;">Gửi cho khách VIP</a></p>
+                    <p style="padding-left: 10px "><a href="{{url('/send-mail',
+                        ['start_date' => $coupon->coupon_date_start,
+                        'end_date' => $coupon->coupon_date_end,
+                        'coupon_time' => $coupon->coupon_time,
+                        'coupon_condition' => $coupon->coupon_condition,
+                        'coupon_number' => $coupon->coupon_number,
+                        'coupon_code' => $coupon->coupon_code] )}}"
+                        class="btn btn-default btn-sm" >Gửi cho khách thường</a></p>
+
+                </td>
                 <td >
                     <a class="btn btn-primary btn-sm" href="/admin/coupons/edit/{{ $coupon->coupon_id }}">
                         <i class="fas fa-edit"></i>
@@ -61,7 +81,7 @@
         </tbody>
     </table>
 <hr>
-    <p style="padding-left: 10px "><a href="/send-mail" class="btn btn-default">Gửi mã giảm giá khách vip</a></p>
+
 
     <div class="card-footer clearfix">
         {!! $coupons->links('pagination::bootstrap-4') !!}
