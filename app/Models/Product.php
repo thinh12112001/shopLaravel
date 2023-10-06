@@ -20,7 +20,8 @@ class Product extends Model
         'price_original',
         'active',
         'file',
-        'product_views'
+        'product_views',
+        'product_quantity'
     ];
 
     public function menu() {

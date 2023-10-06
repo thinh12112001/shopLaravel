@@ -27,7 +27,7 @@ class CartController extends Controller
         $carts = $this->cart->getProductForCart($customer);
 
         return view('admin.carts.detail', [
-            'title' => 'Chi tiết đơn hàng' . $customer->name,
+            'title' => 'Chi tiết đơn hàng của ' . $customer->name,
             'customer' => $customer,
             'carts'=> $carts
         ]);

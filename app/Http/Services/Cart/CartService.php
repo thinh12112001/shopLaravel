@@ -8,9 +8,12 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Cart;
 use App\Models\Coupon;
+use App\Mail\ConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendMail;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
 
 class CartService
 {
@@ -202,6 +205,17 @@ class CartService
 
         return true;
     }
+    public function sendStaticConfirmationEmail($email)
+    {
+        // Nội dung email cứng
+        $content = "<p>Xác nhận đơn hàng của bạn:</p>
+                    <a href='http://shop.test/confirm-order/123/yes'>YES</a>
+                    <a href='http://shop.test/confirm-order/123/no'>NO</a>";
+
+        // Gửi email
+        Mail::to($email)->send(new ConfirmationMail($content));
+    }
+
     public function addCart($request)
     {
         try {
@@ -221,10 +235,9 @@ class CartService
             ]);
 
             if ($coupon) {
-                #update ID that use this coupon
                 try {
                     $updateCouponTimeLeft = Coupon::where('coupon_id', $coupon[0]['coupon_id'])
-                                                    ->whereNotIn('coupon_id', $coupon[0]['coupon_used'])
+                                                    ->whereNotIn('coupon_used', [$coupon[0]['coupon_id']])
                                                     ->get();
                 } catch (\Exception $err) {
                     DB::rollBack();
@@ -256,57 +269,77 @@ class CartService
             if (is_null($carts))
                 return false;
 
+            #check product quantity
+            $product_id = array_keys($carts);
+            $products = Product::select('id', 'name', 'price', 'price_sale','file')
+                                ->where('active',1)
+                                ->whereIn('id', $product_id)
+                                ->get();
+
             #add to cart in db
-            $this->infoProductCart($carts, $customer->id, $salePrice, $saleCondition);
-            DB::commit();
+            $insertCart = $this->infoProductCart($carts, $customer->id, $salePrice, $saleCondition);
+            if ($insertCart !== false) {
+                // try {
+                //     $this->sendStaticConfirmationEmail($request->input('email'));
+                // } catch (\Exception $err) {
+                //     DB::rollBack();
+                //     \Log::error("An error occurred: " . $err->getMessage());
+                //     Session::flash('error', 'Gửi mail Lỗi, Vui lòng thử lại sau');
+                //     return false;
+                // }
+                DB::commit();
+                #Queue
+                SendMail::dispatch($request->input('email'))->delay(now()->addSeconds(5));
 
-            #Queue
-            SendMail::dispatch($request->input('email'))->delay(now()->addSeconds(5));
+                #Remove session
+                Session::forget('carts');
+                Session::forget('coupon');
 
-            #Remove session
-            Session::forget('carts');
-            Session::forget('coupon');
+                #Statistic Revenue
+                $rawData = DB::table('carts')
+                    ->join('customers', 'carts.customer_id', '=', 'customers.id')
+                    ->join('products', 'carts.product_id', '=', 'products.id')
+                    ->select('carts.product_id', 'carts.price', 'carts.qty', 'products.price_original' ,
+                        DB::raw('DATE(customers.created_at) as created_date'),
+                        DB::raw('carts.qty * carts.price as total' ),
+                        DB::raw('carts.qty * products.price_original as total_original' ))
+                            ->where('carts.customer_id',  $customer->id )
+                            ->get();
+                $revenue = [];
+                foreach($rawData as $item) {
+                    $revenue[] =[
+                        'order_date' => $item->created_date,
+                        'sales' =>  $item->total,
+                        'profit' => $item->total  - $item->total_original,
+                        'quantity' => $item->qty,
+                        'total_order' => 1
+                    ];
 
-            #Statistic Revenue
-            $rawData = DB::table('carts')
-                ->join('customers', 'carts.customer_id', '=', 'customers.id')
-                ->join('products', 'carts.product_id', '=', 'products.id')
-                ->select('carts.product_id', 'carts.price', 'carts.qty', 'products.price_original' ,
-                    DB::raw('DATE(customers.created_at) as created_date'),
-                    DB::raw('carts.qty * carts.price as total' ),
-                    DB::raw('carts.qty * products.price_original as total_original' ))
-                        ->where('carts.customer_id',  $customer->id )
-                        ->get();
-            $revenue = [];
-            foreach($rawData as $item) {
-                $revenue[] =[
-                    'order_date' => $item->created_date,
-                    'sales' =>  $item->total,
-                    'profit' => $item->total  - $item->total_original,
-                    'quantity' => $item->qty,
-                    'total_order' => 1
-                ];
+                    $existingRecord = DB::table('statistical')->where('order_date', $item->created_date)->first();
+                    if ($existingRecord) {
+                        $newProfit = $existingRecord->profit + ($item->total - $item->total_original);
+                        $newSales = $existingRecord->sales + $item->total;
+                        $newQuantity = $existingRecord->quantity + $item->qty;
+                        $newTotalOrder = $existingRecord->total_order + 1;
 
-                $existingRecord = DB::table('statistical')->where('order_date', $item->created_date)->first();
-                if ($existingRecord) {
-                    $newProfit = $existingRecord->profit + ($item->total - $item->total_original);
-                    $newSales = $existingRecord->sales + $item->total;
-                    $newQuantity = $existingRecord->quantity + $item->qty;
-                    $newTotalOrder = $existingRecord->total_order + 1;
-
-                    $res = DB::table('statistical')
-                        ->where('order_date', $item->created_date)
-                        ->update(['profit' => $newProfit,
-                                    'sales' => $newSales,
-                                    'quantity' => $newQuantity,
-                                    'total_order' => $newTotalOrder
-                    ]);
-                } else {
-                    DB::table('statistical')->insert($revenue);
+                        $res = DB::table('statistical')
+                            ->where('order_date', $item->created_date)
+                            ->update(['profit' => $newProfit,
+                                        'sales' => $newSales,
+                                        'quantity' => $newQuantity,
+                                        'total_order' => $newTotalOrder
+                        ]);
+                    } else {
+                        DB::table('statistical')->insert($revenue);
+                    }
+                    Session::flash('success', 'Đặt Hàng Thành Công');
                 }
-                Session::flash('success', 'Đặt Hàng Thành Công');
+            } else {
+                DB::rollBack();
+                // \Log::error("An error occurred: " . $err->getMessage());
+                Session::flash('error', 'Số lượng trong kho không đủ! Vui lòng thử lại sau');
+                return false;
             }
-
 
         } catch (\Exception $err) {
             DB::rollBack();
@@ -318,11 +351,13 @@ class CartService
         return true;
     }
 
+
     // thêm data thông tin đặt hàng (CART) vào  DB
     protected function infoProductCart($carts, $customer_id, $salePrice =0, $saleCondition =0) {
 
         $product_id = array_keys($carts);
-        $products = Product::select('id', 'name', 'price', 'price_sale','file')
+
+        $products = Product::select('id', 'name', 'price', 'price_sale','file', 'product_quantity')
                         ->where('active',1)
                         ->whereIn('id', $product_id)
                         ->get();
@@ -332,6 +367,9 @@ class CartService
 
         if ($saleCondition == 1) {
             foreach ($products as $key => $product) {
+                if ($product->product_quantity < $carts[$product->id]) {
+                    return false;
+                }
                 $price = $product->price_sale != 0 ? $product->price_sale : $product->price;
                 $priceAfterCoupon = $price  - ($price * $salePrice) /100;
                 $data[] = [
@@ -340,20 +378,27 @@ class CartService
                     'qty' => $carts[$product->id],
                     'price' =>  $priceAfterCoupon
                 ];
+                $product->product_quantity -=$carts[$product->id];
+                $product->save();
             }
         } else if ($saleCondition == 0) {
             foreach ($products as $key => $product) {
-
+                if ($product->product_quantity < $carts[$product->id]) {
+                    return false;
+                }
                 $data[] = [
                     'customer_id' => $customer_id,
                     'product_id' => $product->id,
                     'qty' => $carts[$product->id],
                     'price' =>  $product->price_sale != 0 ? $product->price_sale : $product->price
                 ];
+                $product->product_quantity -=$carts[$product->id];
+                $product->save();
             }
         }
 
         return Cart::insert($data);
+
     }
 
     public function getCustomer() {

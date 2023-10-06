@@ -31,19 +31,31 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="menu">Giá Gốc</label>
+                        <label for="menu">Giá Bán</label>
                         <input type="number" name="price" value="{{ $product->price }}"  class="form-control" >
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="menu">Giá Giảm</label>
                         <input type="number" name="price_sale" value="{{ $product->price_sale }}"  class="form-control" >
                     </div>
                 </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="menu">Giá Gốc</label>
+                        <input type="number" name="price_original" value="{{ $product->price_original }}"  class="form-control" >
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="menu">Số lượng tồn kho</label>
+                <input min="0" type="number" name="product_quantity" value="{{ $product->product_quantity}}"  class="form-control" >
             </div>
 
             <div class="form-group">

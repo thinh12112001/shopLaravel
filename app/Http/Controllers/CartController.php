@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use App\Http\Requests\Cart\CartRequest;
 use App\Http\Services\Cart\CartService;
 use App\Models\Product;
 use App\Models\Coupon;
@@ -74,7 +75,7 @@ class CartController extends Controller
         return redirect('/carts');
     }
 
-    public function addCart(Request $request) {
+    public function addCart(CartRequest $request) {
         $result = $this->cartService->addCart($request);
 
         if ($result) {

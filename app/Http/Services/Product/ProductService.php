@@ -67,7 +67,7 @@ class ProductService
     public function get() {
         return Product::
             with('menu')
-            ->orderbyDesc('id')->paginate(2);
+            ->orderby('id')->paginate(5);
     }
 
     public function update($request, $product) {

@@ -51,6 +51,11 @@
 
             </div>
 
+                <div class="form-group">
+                    <label for="menu">Số lượng tồn kho</label>
+                    <input min="0" type="number" name="product_quantity" value="{{ old('product_quantity') }}"  class="form-control" >
+                </div>
+
             <div class="form-group">
                 <label>Mô Tả </label>
                 <textarea name="description" class="form-control">{{ old('description') }}</textarea>

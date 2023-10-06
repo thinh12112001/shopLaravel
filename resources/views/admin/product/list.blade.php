@@ -7,6 +7,7 @@
             <th style="width: 50px">ID</th>
             <th>Tên Sản Phẩm</th>
             <th>Danh Mục</th>
+            <th>Số lượng</th>
             <th>Giá Gốc</th>
             <th>Giá Khuyến Mãi</th>
             <th>Active</th>
@@ -20,6 +21,7 @@
                 <td>{{ $product->id }}</td>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->menu->name }}</td>
+                <td>{{$product->product_quantity}}</td>
                 <td>{{ $product->price }}</td>
                 <td>{{ $product->price_sale }}</td>
                 <td>{!! \App\Helpers\Helper::active($product->active) !!}</td>
