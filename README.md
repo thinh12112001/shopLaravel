@@ -11,3 +11,4 @@
 - CRUD Management: Category, Product, Slider, Cart, Comment, Blog, Coupon
 - Reply comment, validate comment
 - Send coupon for normal and VIP customer by email.
+- Inventory Management
