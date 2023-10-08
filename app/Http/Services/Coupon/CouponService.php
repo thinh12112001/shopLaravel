@@ -6,11 +6,11 @@ use App\Models\Coupon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
+
 class CouponService
 {
     public function get() {
-        
-        return Coupon::orderby('coupon_id')->paginate(20);
+        return Coupon::orderby('coupon_id')->paginate(10);
     }
 
     public function insert($request) {

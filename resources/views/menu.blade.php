@@ -53,17 +53,18 @@
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="{{ request()->fullUrlWithQuery(['price' => 'asc']) }}" class="filter-link stext-106 trans-04">
+                                    <a href="{{ request()->fullUrlWithQuery(['price' => 'asc', 'rating' => null]) }}" class="filter-link stext-106 trans-04">
                                         Price: Low to High
                                     </a>
                                 </li>
 
                                 <li class="p-b-6">
-                                    <a href="{{ request()->fullUrlWithQuery(['price' => 'desc']) }}" class="filter-link stext-106 trans-04">
+                                    <a href="{{ request()->fullUrlWithQuery(['price' => 'desc', 'rating' => null]) }}" class="filter-link stext-106 trans-04">
                                         Price: High to Low
                                     </a>
                                 </li>
                             </ul>
+
                         </div>
 
                         <div class="filter-col2 p-r-15 p-b-27">
@@ -72,11 +73,6 @@
                             </div>
 
                             <ul>
-                                <li class="p-b-6">
-                                    <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-                                        All
-                                    </a>
-                                </li>
 
                                 <li class="p-b-6">
                                     {{-- <a href="#" class="filter-link stext-106 trans-04"> --}}
@@ -99,12 +95,34 @@
                             </ul>
                         </div>
 
+                        <div class="filter-col2 p-r-15 p-b-27">
+                            <div class="mtext-102 cl2 p-b-15">
+                                Stars
+                            </div>
+
+                            <ul>
+
+                                <li class="p-b-6">
+                                    {{-- <a href="#" class="filter-link stext-106 trans-04"> --}}
+                                        <a href="{{ request()->fullUrlWithQuery(['rating' => 'asc', 'price' => null]) }}" class="filter-link stext-106 trans-04">
+                                        Least to Most ✮
+                                    </a>
+                                </li>
+
+                                <li class="p-b-6">
+                                    <a href="{{ request()->fullUrlWithQuery(['rating' => 'desc', 'price' => null]) }}" class="filter-link stext-106 trans-04">
+                                        Most to Least ✮
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
 
                     </div>
                 </div>
             </div>
 
-            @include('products.list')
+            @include('products.prod_by_category')
 
             {!! $products->links() !!}
         </div>

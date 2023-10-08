@@ -1,5 +1,16 @@
 
 
+@php
+use Illuminate\Support\Facades\Cache;
+use App\Models\Product;
+
+if (!Cache::get('top_views_product')) {
+            $value = Product::orderBy('product_views','DESC')->take(4)->get();
+            Cache::put('top_views_product',$value);
+        }
+
+        $products = Cache::get('top_views_product');
+@endphp
 <div class="row isotope-grid">
     {{-- <form>
         @csrf --}}
@@ -27,8 +38,7 @@
                         </a>
 
                         <span class="stext-105 cl3">
-                            {{-- {!! \App\Helpers\Helper::price($product->price, $product->price_sale) !!} --}}
-                            {!!number_format(\App\Helpers\Helper::price($product->price, $product->price_sale), 0, '', ',') !!}đ
+                            {!! \App\Helpers\Helper::price($product->price, $product->price_sale) !!}
                         </span>
                     </div>
 

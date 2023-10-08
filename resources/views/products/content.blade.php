@@ -75,7 +75,8 @@
                         </h4>
 
                         <span class="mtext-106 cl2">
-							{!! \App\Helpers\Helper::price($product->price, $product->price_sale) !!}
+							{{-- {!! \App\Helpers\Helper::price($product->price, $product->price_sale) !!} --}}
+                            {!!number_format(\App\Helpers\Helper::price($product->price, $product->price_sale), 0, '', ',') !!}đ
 						</span>
 
                         <p class="stext-102 cl3 p-t-23">

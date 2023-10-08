@@ -15,7 +15,12 @@ class ProductService
     }
 
     public function getAll() {
-        return Product::orderbyDesc('id')->paginate(20);
+        if (!Cache::has('product')) {
+            $value = Product::orderbyDesc('id')->paginate(20);
+            Cache::put('product', $value);
+        }
+        return Cache::get('product');
+        // return Product::orderbyDesc('id')->paginate(20);
     }
 
     public function create($request) {

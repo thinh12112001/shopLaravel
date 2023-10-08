@@ -8,12 +8,13 @@ class BlogService
 {
     public function get($request) {
         $query = Blog::where('active',1);
-
+        
         if ($request->input('search')) {
             $query->where('name', 'like','%'. $request->input('search'). '%');
 
         }
 
+        #orderBy top views
         if ($request->input('orderBy'))  {
             if ( $request->input('orderBy') == 'views') {
                 $query->orderBy('blog_views', $request->input('type'));

@@ -6,15 +6,37 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use Carbon\Carbon;
 use Mail;
+use Illuminate\Support\Facades\Cache;
 
 class MailController extends Controller
 {
+    public function getDistinctMailCusVip() {
+        if (!Cache::get('customer_vip')) {
+            $value = Customer::where('customer_vip', 1)
+                                    ->distinct()
+                                    ->pluck('email');
+            Cache::put('customer_vip',$value);
+        }
+
+        return Cache::get('customer_vip');
+    }
+
+    public function getDistinctMailCusNor() {
+        if (!Cache::get('customer_nor')) {
+            $value = Customer::whereNot('customer_vip', 1)
+                                    ->distinct()
+                                    ->pluck('email');
+            Cache::put('customer_nor',$value);
+        }
+
+        return Cache::get('customer_nor');
+    }
+
     public function send_mail_vip($start_date, $end_date, $coupon_time, $coupon_condition, $coupon_number,$coupon_code, Request $request) {
         try {
 
-            $customer_vip = Customer::where('customer_vip', 1)
-                                    ->distinct()
-                                    ->pluck('email');
+            $customer_vip = $this->getDistinctMailCusVip();
+
             $now = Carbon::now('Asia/Ho_Chi_Minh')->format('Y-m-d H:i:s');
             $title_mail = "Mã khuyến mãi ngày ". $now;
 
@@ -50,9 +72,8 @@ class MailController extends Controller
 
     public function send_mail ($start_date, $end_date, $coupon_time, $coupon_condition, $coupon_number,$coupon_code, Request $request) {
         try {
-            $customer = Customer::whereNot('customer_vip', 1)
-                                    ->distinct()
-                                    ->pluck('email');
+            $customer = $this->getDistinctMailCusNor();
+            
             $now = Carbon::now('Asia/Ho_Chi_Minh')->format('Y-m-d H:i:s');
             $title_mail = "Mã khuyến mãi ngày ". $now;
 

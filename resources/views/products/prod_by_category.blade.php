@@ -1,10 +1,17 @@
 
 
+@php
+    use App\Models\Rating;
+@endphp
 <div class="row isotope-grid">
-    {{-- <form>
-        @csrf --}}
-
         @foreach ($products as $key => $product)
+        @php
+                $rating = Rating::where('product_id', $product->id)->avg('rating');
+                $rating = round($rating);
+                $reviewNums = Rating::where('product_id', $product->id)->count('rating');
+                // dd($reviewNums);
+
+        @endphp
         <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
             <!-- Block2 -->
             <div class="block2">
@@ -20,20 +27,80 @@
                     data-id_product="{{$product->id}}" name="add-to-cart"> --}}
                 </div>
 
+                <style>
+
+                    .price_prodname a {
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: inherit;
+                    }
+
+                </style>
                 <div class="block2-txt flex-w flex-t p-t-14">
-                    <div class="block2-txt-child1 flex-col-l ">
+                    <div class="block2-txt-child1 flex-col-l price_prodname">
                         <a href="/san-pham/{{ $product->id }}-{{ Str::slug($product->name, '-') }}.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                             {{$product->name}}
                         </a>
 
                         <span class="stext-105 cl3">
-                            {{-- {!! \App\Helpers\Helper::price($product->price, $product->price_sale) !!} --}}
                             {!!number_format(\App\Helpers\Helper::price($product->price, $product->price_sale), 0, '', ',') !!}đ
+
                         </span>
                     </div>
-
-
                 </div>
+                {{-- test --}}
+                <style>
+                    .list-inline {
+                        list-style: none; /* Loại bỏ kiểu đánh dấu (bullet points) của danh sách */
+                        padding: 0; /* Loại bỏ padding */
+                        margin: 0; /* Loại bỏ margin */
+                    }
+
+                    .list-inline li {
+                        display: inline-block; /* Hiển thị các mục danh sách trên cùng một hàng */
+                    }
+
+                    .centered-list {
+                        display: flex;
+                        justify-content: space-between;
+                    }
+
+                    .centered-list ul {
+                        flex: 1;
+                        list-style-type: none;
+                        padding: 0;
+                    }
+
+                    .centered-list span {
+                        flex: 1;
+                        display: flex;
+                        align-items: center;
+                    }
+                </style>
+                <div class="centered-list">
+                    <ul class="list-inline" title="Average Rating">
+                        @for ($count =1; $count <=5; $count++)
+                            @php
+                                if ($count <= $rating) {
+                                    $color = 'color:#ffcc00;';
+                                } else {
+                                    $color = 'color:#ccc;';
+                                }
+                            @endphp
+                            <li title="star_rating"
+                                {{-- id="{{$product->id}}-{{$count}}"
+                                data-index="{{$count}}"
+                                data-product_id="{{$product->id}}"
+                                data-rating="{{$rating}}"
+                                class="rating" --}}
+                                style="cursor:pointer; {{$color}} font-size:30px;">
+                                &#9733;
+                            </li>
+                        @endfor
+                    </ul>
+                    <span> {{$reviewNums}} review</span>
+                </div>
+                {{-- test --}}
             </div>
         </div>
         @endforeach

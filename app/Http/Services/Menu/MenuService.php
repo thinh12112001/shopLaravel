@@ -5,6 +5,7 @@ namespace App\Http\Services\Menu;
 use App\Models\Menu;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class MenuService
 {
@@ -76,27 +77,61 @@ class MenuService
     }
 
     public function getProduct($menu, $request){
+        // #order by rating
+        // if ($request->has('rating')) {
+        //     $ratingOrder = $request->input('rating') === 'asc' ? 'ASC' : 'DESC';
 
-        $query = $menu->products()
-            ->select('id','name', 'price', 'price_sale','file')
-            ->where('active',1);
+        //     $ratingQuery = $menu->products()
+        //         ->select('products.id', 'products.name', 'products.price', 'products.price_sale', 'products.file', DB::raw('AVG(rating.rating) as avg_rating'))
+        //         ->leftJoin('rating', 'products.id', '=', 'rating.product_id')
+        //         ->groupBy('products.id','products.id', 'products.name', 'products.price', 'products.price_sale', 'products.file')
+        //         ->havingRaw('AVG(rating.rating) >= 0')  // Chỉ lấy sản phẩm có đánh giá
+        //         ->whereExists(function ($query) {
+        //             $query->select(DB::raw(1))
+        //                 ->from('rating')
+        //                 ->whereRaw('rating.product_id = products.id');
+        //         });
 
-        if ($request->input('search')) {
-            $query->where('name', 'like','%'. $request->input('search'). '%');
+        //     // Sắp xếp theo giá trị trung bình đánh giá
+        //     $ratingQuery->orderBy('avg_rating', $ratingOrder);
 
-        }
+        //     return $ratingQuery->paginate(12)->withQueryString();
+        // }
 
-        if ($request->has('from') && is_numeric($request->input('from'))) {
-            $query->whereBetween('price', [(int)$request->input('from'), (int)$request->input('to')]);
-        }
+            #Region another sort and filter
+            $query = $menu->products()
+                ->select('products.id', 'products.name', 'products.price', 'products.price_sale', 'products.file')
+                ->where('products.active', 1);
 
-        if ($request->input('price')) {
-            $query->orderBy('price', $request->input('price'));
+            if ($request->input('search')) {
+                $query->where('name', 'like','%'. $request->input('search'). '%');
 
-        }
+            }
+            # filter price range
+            if ($request->has('from') && is_numeric($request->input('from'))) {
+                $query->whereBetween('price', [(int)$request->input('from'), (int)$request->input('to')]);
+            }
 
-        return $query->orderByDesc('id')
-            ->paginate(12)->withQueryString();
+            # orderby price
+            if ($request->input('price')) {
+                $query->orderBy('price', $request->input('price'));
+            } elseif ($request->has('rating')) {
+                $query->leftJoin('rating', 'products.id', '=', 'rating.product_id')
+                    ->groupBy('products.id', 'products.name', 'products.price', 'products.price_sale', 'products.file')
+                    ->havingRaw('AVG(rating.rating) >= 0')
+                    ->whereExists(function ($subquery) {
+                        $subquery->select(DB::raw(1))
+                            ->from('rating')
+                            ->whereRaw('rating.product_id = products.id');
+                    });
+
+                $ratingOrder = $request->input('rating') === 'asc' ? 'ASC' : 'DESC';
+                $query->orderBy(DB::raw('AVG(rating.rating)'), $ratingOrder);
+            }
+
+            return $query->orderByDesc('id')
+                ->paginate(12)->withQueryString();
+
 
     }
 }

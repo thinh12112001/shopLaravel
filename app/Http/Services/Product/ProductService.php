@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Menu;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class ProductService
 {
@@ -64,10 +65,10 @@ class ProductService
         return true;
     }
 
-    public function get() {
+    public function get() { 
         return Product::
             with('menu')
-            ->orderby('id')->paginate(5);
+            ->orderby('id')->paginate(10);
     }
 
     public function update($request, $product) {

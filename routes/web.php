@@ -151,7 +151,7 @@ Route::get('blog/detail/{id}-{slug}.html', [App\Http\Controllers\BlogController:
 Route::post('/insert-rating', [App\Http\Controllers\ProductController::class, 'insert_rating']);
 
 #Send mail coupon
-Route::get('/send-mail-vip/{start_date}/{end_date}/{coupon_time}/{coupon_condition}/{coupon_number}/{coupon_code}', [App\Http\Controllers\MailController::class, 'send_mail_vip']);
+Route::get('/send-mail-vip/{start_date}/{end_date}/{coupon_time}/{coupon_condition}/{coupon_number}/{coupon_code}', [App\Http\Controllers\MailController::class, 'send_mloail_vip']);
 Route::get('/send-mail/{start_date}/{end_date}/{coupon_time}/{coupon_condition}/{coupon_number}/{coupon_code}', [App\Http\Controllers\MailController::class, 'send_mail']);
 Route::get('/mail-example', [App\Http\Controllers\MailController::class, 'mail_example']);
 
